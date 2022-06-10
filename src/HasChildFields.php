@@ -1,6 +1,6 @@
 <?php
 
-namespace Epartment\NovaDependencyContainer;
+namespace Workup\NovaDependencyContainer;
 
 trait HasChildFields
 {

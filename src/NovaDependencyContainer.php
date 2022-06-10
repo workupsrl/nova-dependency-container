@@ -1,6 +1,6 @@
 <?php
 
-namespace Epartment\NovaDependencyContainer;
+namespace Workup\NovaDependencyContainer;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Fields\Field;
