@@ -1,5 +1,5 @@
 {
-    "name": "workupsrl/nova-dependency-container",
+    "name": "workup/nova-dependency-container",
     "description": "A Laravel Nova field container allowing to depend on other fields values",
     "keywords": [
         "laravel",
