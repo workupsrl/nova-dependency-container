@@ -1,20 +1,8 @@
 # Nova Field Dependency Container
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/workupsrl/nova-dependency-container.svg)](https://packagist.org/packages/workupsrl/nova-dependency-container)
-[![Total Downloads](https://img.shields.io/packagist/dt/workupsrl/nova-dependency-container.svg)](https://packagist.org/packages/workupsrl/nova-dependency-container)
-[![License](https://img.shields.io/packagist/l/workupsrl/nova-dependency-container.svg)](https://github.com/workupsrl/nova-dependency-container/blob/master/LICENSE.md)
-
-<br />
-
 ### Description
 
 A container for grouping fields that depend on other field values. Dependencies can be set on any field type or value.
-
-<br />
-
-### Demo
-
-![Demo](https://raw.githubusercontent.com/workupsrl/nova-dependency-container/master/docs/demo.gif)
 
 <br />
 
@@ -30,7 +18,7 @@ A container for grouping fields that depend on other field values. Dependencies 
 The package can be installed through Composer.
 
 ```bash
-composer require workupsrl/nova-dependency-container
+composer require workup/nova-dependency-container
 ```
 
 <br />
