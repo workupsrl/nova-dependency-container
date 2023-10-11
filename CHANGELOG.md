@@ -3,8 +3,6 @@
 <br />
 
 ### Releases
- - [v1.3.4](https://github.com/workupsrl/nova-dependency-container/releases/tag/1.3.4)
-   - Fixed chained OnNot dependencies not working properly
  - [v1.2.10](https://github.com/workupsrl/nova-dependency-container/releases/tag/1.2.10)
  	- Fixes a problem with [Whitecubes Flexible Content](https://github.com/whitecube/nova-flexible-content) package where the dependency container would do nothing #93 [whitecube/nova-flexible-content#87](https://github.com/whitecube/nova-flexible-content/issues/87)
  - [v1.2.9](https://github.com/workupsrl/nova-dependency-container/releases/tag/1.2.9)
