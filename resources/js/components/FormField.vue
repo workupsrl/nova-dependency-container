@@ -32,6 +32,7 @@
 			return {
 				dependencyValues: {},
 				dependenciesSatisfied: false,
+                satisfiedCounts: 0
 			}
 		},
 
@@ -109,37 +110,34 @@
 
 			// @todo: align this method with the responsibility of updating the dependency, not verifying the dependency "values"
 			updateDependencyStatus() {
+
+                this.satisfiedCounts = 0;
 				for (let dependency of this.field.dependencies) {
 
 					// #93 compatability with flexible-content, which adds a generated attribute for each field
 					let dependencyValue = this.dependencyValues[(this.field.attribute + dependency.field)];
 					if (dependency.hasOwnProperty('empty') && !dependencyValue) {
-						this.dependenciesSatisfied = true;
-						return;
+						this.satisfiedCounts++;
 					}
 
 					if (dependency.hasOwnProperty('notEmpty') && dependencyValue) {
-						this.dependenciesSatisfied = true;
-						return;
+						this.satisfiedCounts++;
 					}
 
 					if (dependency.hasOwnProperty('nullOrZero') && 1 < [undefined, null, 0, '0'].indexOf(dependencyValue) ) {
-						this.dependenciesSatisfied = true;
-						return;
+						this.satisfiedCounts++;
 					}
 
-					if (dependency.hasOwnProperty('not') && dependencyValue != dependency.not) {
-						this.dependenciesSatisfied = true;
-						return;
+					if (dependency.hasOwnProperty('not') && dependencyValue !== dependency.not) {
+						this.satisfiedCounts++;
 					}
 
-					if (dependency.hasOwnProperty('value') && dependencyValue == dependency.value) {
-						this.dependenciesSatisfied = true;
-						return;
+					if (dependency.hasOwnProperty('value') && dependencyValue === dependency.value) {
+						this.satisfiedCounts++;
 					}
 				}
 
-				this.dependenciesSatisfied = false;
+				this.dependenciesSatisfied = (this.field.dependencies.length === this.satisfiedCounts);
 			},
 
 			fill(formData) {
