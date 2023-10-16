@@ -11,7 +11,8 @@ use Illuminate\Http\Resources\ConditionallyLoadsAttributes;
 
 class DependencyContainer extends Field
 {
-    use ResolvesFields, ConditionallyLoadsAttributes;
+    use ResolvesFields;
+    use ConditionallyLoadsAttributes;
 
     /**
      * The field's component.
@@ -189,7 +190,12 @@ class DependencyContainer extends Field
             }
 
             if (array_key_exists('value', $dependency)) {
-                if ($dependency['value'] == $value) {
+                if (is_array($resource)) {
+                    if (isset($resource[$dependency['property']]) && $dependency['value'] == $resource[$dependency['property']]) {
+                        $this->meta['dependencies'][$index]['satisfied'] = true;
+                    }
+                    continue;
+                } elseif ($dependency['value'] == $resource->{$dependency['property']}) {
                     $this->meta['dependencies'][$index]['satisfied'] = true;
                     continue;
                 }
@@ -267,9 +273,11 @@ class DependencyContainer extends Field
             }
 
             // inverted
-            if (array_key_exists('nullOrZero', $dependency) && in_array($request->get($dependency['property']),
-                    [null, 0, '0'],
-                    true)) {
+            if (array_key_exists('nullOrZero', $dependency) && in_array(
+                $request->get($dependency['property']),
+                [null, 0, '0'],
+                true
+            )) {
                 $satisfiedCounts++;
             }
 

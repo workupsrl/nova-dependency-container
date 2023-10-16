@@ -8,6 +8,7 @@
 				:resource-name="resourceName"
 				:field="childField"
 				:ref="'field-' + childField.attribute"
+				:show-help-text="childField.helpText != null"
 			/>
 		</div>
 	</div>
@@ -156,7 +157,7 @@
 						return;
 					}
 
-					if (dependency.hasOwnProperty('not') && dependencyValue !== dependency.not) {
+					if (dependency.hasOwnProperty('not') && dependencyValue != dependency.not) {
 						this.dependenciesSatisfied = true;
 						return;
 					}
