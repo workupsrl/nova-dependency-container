@@ -1,33 +1,27 @@
-# Nova Field Dependency Container
+# Nova Dependency Container
 
 ### Description
 
-A container for grouping fields that depend on other field values. Dependencies can be set on any field type or value.
+- `php: >=8.0`
+- `laravel/nova: ^4.0`
 
-<br />
+## Screenshots
 
-### Versions
+![Screenshots](./docs/demo.gif)
 
- - install v1.2.x for Laravel v5.8 or v6.x and Nova 2.x
- - install v1.1.2 for Laravel v5.7 and Nova v1.x
+## Installation
 
-<br />
-
-### Installation
-
-The package can be installed through Composer.
+Install the package in a Laravel Nova project via Composer:
 
 ```bash
 composer require workup/nova-dependency-container
 ```
 
-<br />
+## Usage
 
-### Usage
-
-1. Add the `Workup\NovaDependencyContainer\HasDependencies` trait to your Nova Resource.
-2. Add the `Workup\NovaDependencyContainer\NovaDependencyContainer` to your Nova Resource `fields` method.
-3. Add the `Workup\NovaDependencyContainer\ActionHasDependencies` trait to your Nova Actions that you wish to use dependencies on.
+1. Add the `Workup\Nova\DependencyContainer\HasDependencies` trait to your Nova Resource.
+2. Add the `Workup\Nova\DependencyContainer\DependencyContainer` field to your Nova Resource.
+3. Add the `Workup\Nova\DependencyContainer\ActionHasDependencies` trait to your Nova Actions that you wish to use dependencies on.
 
 ```php
 class Page extends Resource
@@ -37,14 +31,14 @@ class Page extends Resource
     public function fields(Request $request)
     {
         return [
-            
+
             Select::make('Name format', 'name_format')->options([
                 0 => 'First Name',
                 1 => 'First Name / Last Name',
                 2 => 'Full Name'
             ])->displayUsingLabels(),
 
-            NovaDependencyContainer::make([
+            DependencyContainer::make([
                 Text::make('First Name', 'first_name')
             ])->dependsOn('name_format', 0),
 
@@ -52,8 +46,6 @@ class Page extends Resource
     }
 }
 ```
-
-<br />
 
 ### Dependencies
 
@@ -65,10 +57,10 @@ The package supports four kinds of dependencies:
 4. `->dependsOnNotEmpty('field')`
 5. `->dependsOnNullOrZero('field')`
 
-These dependencies can be combined by chaining the methods on the `NovaDependencyContainer`:
+These dependencies can be combined by chaining the methods on the `DependencyContainer`:
 
 ```php
-NovaDependencyContainer::make([
+DependencyContainer::make([
   // dependency fields
 ])
 ->dependsOn('field1', 'value1')
@@ -76,25 +68,22 @@ NovaDependencyContainer::make([
 ->dependsOn('field3', 'value3')
 ```
 
-The fields used as dependencies can be of any Laravel Nova field type. Currently only two relation field types are supported, `BelongsTo` and `MorphTo`. 
+The fields used as dependencies can be of any Laravel Nova field type. Currently only two relation field types are supported, `BelongsTo` and `MorphTo`.
 
 Here is an example using a checkbox:
 
-![Demo](https://raw.githubusercontent.com/workupsrl/nova-dependency-container/master/docs/demo-2.gif)
-
-
-<br />
+![Demo](./docs/demo-2.gif)
 
 ### BelongsTo dependency
 
-If we follow the example of a *Post model belongsTo a User model*, taken from Novas documentation [BelongsTo](https://nova.laravel.com/docs/2.0/resources/relationships.html#belongsto), the dependency setup has the following construction.
+If we follow the example of a _Post model belongsTo a User model_, taken from Novas documentation [BelongsTo](https://nova.laravel.com/docs/2.0/resources/relationships.html#belongsto), the dependency setup has the following construction.
 
 We use the singular form of the `belongsTo` resource in lower case, in this example `Post` becomes `post`. Then we define in dot notation, the property of the resource we want to depend on. In this example we just use the `id` property, as in `post.id`.
 
 ```php
 BelongsTo::make('Post'),
 
-NovaDependencyContainer::make([
+DependencyContainer::make([
     Boolean::make('Visible')
 ])
 ->dependsOn('post.id', 2)
@@ -102,19 +91,17 @@ NovaDependencyContainer::make([
 
 When the `Post` resource with `id` 2 is being selected, a `Boolean` field will appear.
 
-<br />
-
 ### BelongsToMany dependency
 
 A [BelongsToMany](https://nova.laravel.com/docs/2.0/resources/relationships.html#belongstomany) setup is similar to that of a [BelongsTo](https://nova.laravel.com/docs/2.0/resources/relationships.html#belongsto).
 
-The `dependsOn` method should be pointing to the name of the intermediate table. If it is called `role_user`, the setup should be 
+The `dependsOn` method should be pointing to the name of the intermediate table. If it is called `role_user`, the setup should be
 
 ```php
 BelongsToMany::make('Roles')
 	->fields(function() {
 		return [
-			NovaDependencyContainer::make([
+			DependencyContainer::make([
 			    // pivot field rules_all
 			    Boolean::make('Rules All', 'rules_all')
 			])
@@ -131,26 +118,26 @@ Here is an (ugly) example of a get/set mutator setup for an intermediate table u
 
 ```php
 // model User
-class User ... { 
-   
+class User ... {
+
    public function roles() {
    		return $this->belongsToMany->using(RoleUser::class)->withPivot('rules_all');
    }
-   
+
 }
 
 // model Role
-class Role ... { 
-   
+class Role ... {
+
    public function users() {
    		return $this->belongsToMany->using(RoleUser::class)->withPivot('rules_all');
    }
-   
+
 }
 
 // intermediate table
 use Illuminate\Database\Eloquent\Relations\Pivot;
-class RoleUser extends Pivot {  
+class RoleUser extends Pivot {
 
 	protected $table 'role_user';
 
@@ -171,34 +158,32 @@ And now for the dependency container.
 ```php
 ->fields(function() {
 	return [
-		NovaDependencyContainer::make([
+		DependencyContainer::make([
 		    // pivot field rules_all
 		    Select::make('Type', 'type_1')
-		    	->options([ 
-		    		/* some options */ 
+		    	->options([
+		    		/* some options */
 	    		])
 		    	->displayUsingLabels()
 		])
 		->dependsOn('role_user', 1)
 		,
-	
-		NovaDependencyContainer::make([
+
+		DependencyContainer::make([
 		    // pivot field rules_all
 		    Select::make('Type', 'type_2')
-		    	->options([ 
-		    		/* different options */ 
+		    	->options([
+		    		/* different options */
 	    		])
 		    	->displayUsingLabels()
 		])
 		->dependsOn('role_user', 2)
 		,
-		
+
 		// .. and so on
 	]
 }),
 ```
-
-<br />
 
 ### MorphTo dependency
 
@@ -214,15 +199,13 @@ MorphTo::make('Commentable')->types([
     Video::class,
 ]),
 
-NovaDependencyContainer::make([
+DependencyContainer::make([
     Text::make('Additional Text', 'additional'),
     Boolean::make('Visible', 'visible')
 ])
-->dependsOn('commentable', 'Post') 
+->dependsOn('commentable', 'Post')
 ```
 
-<br />
+## License
 
-### License
-
-The MIT License (MIT). Please see [License File](https://github.com/workupsrl/nova-dependency-container/blob/master/LICENSE.md) for more information.
+This project is open-sourced software licensed under the [MIT license](LICENSE.md).

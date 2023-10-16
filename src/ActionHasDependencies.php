@@ -1,20 +1,21 @@
 <?php
 
-namespace Workup\NovaDependencyContainer;
+namespace Workup\Nova\DependencyContainer;
 
-use Laravel\Nova\Http\Requests\ActionRequest;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Nova\Http\Requests\ActionRequest;
+use Illuminate\Validation\ValidationException;
 
 trait ActionHasDependencies
 {
     use HasChildFields;
 
-    protected function fieldsForValidation(ActionRequest $request)
+    protected function fieldsForValidation(ActionRequest $request): array
     {
         $availableFields = [];
 
         foreach ($this->fields() as $field) {
-            if ($field instanceof NovaDependencyContainer) {
+            if ($field instanceof DependencyContainer) {
                 // do not add any fields for validation if container is not satisfied
                 if ($field->areDependenciesSatisfied($request)) {
                     $availableFields[] = $field;
@@ -28,6 +29,8 @@ trait ActionHasDependencies
         if ($this->childFieldsArr) {
             $availableFields = array_merge($availableFields, $this->childFieldsArr);
         }
+
+        return $availableFields;
     }
 
     /**
@@ -35,10 +38,12 @@ trait ActionHasDependencies
      *
      * Uses the above to validate only on fields that have satisfied dependencies.
      *
-     * @param  \Laravel\Nova\Http\Requests\ActionRequest  $request
-     * @return void
+     * @param  ActionRequest  $request
+     *
+     * @return array
+     * @throws ValidationException
      */
-    public function validateFields(ActionRequest $request)
+    public function validateFields(ActionRequest $request): array
     {
         $fields = collect($this->fieldsForValidation($request));
 

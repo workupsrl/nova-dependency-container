@@ -1,12 +1,12 @@
 <?php
 
-namespace Workup\NovaDependencyContainer;
+namespace Workup\Nova\DependencyContainer;
 
 use Laravel\Nova\Nova;
-use Laravel\Nova\Events\NovaServiceProviderRegistered;
 use Laravel\Nova\Events\ServingNova;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
+use Laravel\Nova\Events\NovaServiceProviderRegistered;
 
 class FieldServiceProvider extends ServiceProvider
 {
@@ -21,12 +21,8 @@ class FieldServiceProvider extends ServiceProvider
         Event::listen(NovaServiceProviderRegistered::class, function () {
             app()->bind(
                 \Laravel\Nova\Http\Controllers\ActionController::class,
-                \Workup\NovaDependencyContainer\Http\Controllers\ActionController::class
+                \Workup\Nova\DependencyContainer\Http\Controllers\ActionController::class
             );
-        });
-
-        Nova::serving(function (ServingNova $event) {
-            Nova::script('nova-dependency-container', __DIR__.'/../dist/js/field.js');
         });
     }
 }
