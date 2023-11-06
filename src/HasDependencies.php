@@ -75,7 +75,7 @@ trait HasDependencies
      *
      * @todo: implement
      */
-    public function filterFieldForRequest($field, NovaRequest $request): mixed
+    public function filterFieldForRequest($field, NovaRequest $request)
     {
         // @todo: filter fields for request, e.g. show/hideOnIndex, create, update or whatever
         return $field;

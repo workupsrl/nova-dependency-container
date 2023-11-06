@@ -11,8 +11,7 @@ use Illuminate\Http\Resources\ConditionallyLoadsAttributes;
 
 class DependencyContainer extends Field
 {
-    use ResolvesFields;
-    use ConditionallyLoadsAttributes;
+    use ResolvesFields, ConditionallyLoadsAttributes;
 
     /**
      * The field's component.
@@ -49,9 +48,9 @@ class DependencyContainer extends Field
      * @param $field
      * @param $value
      *
-     * @return DependencyContainer
+     * @return $this
      */
-    public function dependsOn($field, $value): DependencyContainer
+    public function dependsOn($field, $value): self
     {
         return $this->withMeta([
             'dependencies' => array_merge($this->meta['dependencies'], [
@@ -68,7 +67,7 @@ class DependencyContainer extends Field
      *
      * @return DependencyContainer
      */
-    public function dependsOnNot($field, $value): DependencyContainer
+    public function dependsOnNot($field, $value): self
     {
         return $this->withMeta([
             'dependencies' => array_merge($this->meta['dependencies'], [
@@ -84,7 +83,7 @@ class DependencyContainer extends Field
      *
      * @return DependencyContainer
      */
-    public function dependsOnEmpty($field): DependencyContainer
+    public function dependsOnEmpty($field): self
     {
         return $this->withMeta([
             'dependencies' => array_merge($this->meta['dependencies'], [
@@ -100,7 +99,7 @@ class DependencyContainer extends Field
      *
      * @return DependencyContainer
      */
-    public function dependsOnNotEmpty($field): DependencyContainer
+    public function dependsOnNotEmpty($field): self
     {
         return $this->withMeta([
             'dependencies' => array_merge($this->meta['dependencies'], [
@@ -116,7 +115,7 @@ class DependencyContainer extends Field
      *
      * @return $this
      */
-    public function dependsOnNullOrZero($field): static
+    public function dependsOnNullOrZero($field): self
     {
         return $this->withMeta([
             'dependencies' => array_merge($this->meta['dependencies'], [
@@ -140,7 +139,6 @@ class DependencyContainer extends Field
             // backwards compatibility, property becomes field
             $field[1] = $field[0];
         }
-
         return [
             // literal form input name
             'field' => $field[0],
@@ -190,12 +188,7 @@ class DependencyContainer extends Field
             }
 
             if (array_key_exists('value', $dependency)) {
-                if (is_array($resource)) {
-                    if (isset($resource[$dependency['property']]) && $dependency['value'] == $resource[$dependency['property']]) {
-                        $this->meta['dependencies'][$index]['satisfied'] = true;
-                    }
-                    continue;
-                } elseif ($dependency['value'] == $resource->{$dependency['property']}) {
+                if ($dependency['value'] == $value) {
                     $this->meta['dependencies'][$index]['satisfied'] = true;
                     continue;
                 }
@@ -214,11 +207,11 @@ class DependencyContainer extends Field
      * Resolve dependency fields
      *
      * @param  mixed  $resource
-     * @param  string  $attribute
+     * @param  null  $attribute
      *
-     * @return array|mixed
+     * @return void
      */
-    public function resolve($resource, $attribute = null)
+    public function resolve($resource, $attribute = null): void
     {
         foreach ($this->meta['fields'] as $field) {
             $field->resolve($resource, $attribute);
@@ -273,11 +266,9 @@ class DependencyContainer extends Field
             }
 
             // inverted
-            if (array_key_exists('nullOrZero', $dependency) && in_array(
-                $request->get($dependency['property']),
-                [null, 0, '0'],
-                true
-            )) {
+            if (array_key_exists('nullOrZero', $dependency) && in_array($request->get($dependency['property']),
+                    [null, 0, '0'],
+                    true)) {
                 $satisfiedCounts++;
             }
 
@@ -285,7 +276,8 @@ class DependencyContainer extends Field
                 $satisfiedCounts++;
             }
 
-            if (array_key_exists('value', $dependency) && $dependency['value'] == $request->get($dependency['property'])) {
+            if (array_key_exists('value',
+                    $dependency) && $dependency['value'] == $request->get($dependency['property'])) {
                 $satisfiedCounts++;
             }
         }
@@ -301,13 +293,13 @@ class DependencyContainer extends Field
      *
      * @return array
      */
-    protected function getSituationalRulesSet(NovaRequest $request, string $propertyName = 'rules')
+    protected function getSituationalRulesSet(NovaRequest $request, string $propertyName = 'rules'): array
     {
         $fieldsRules = [$this->attribute => []];
         if (
-            ! $this->areDependenciesSatisfied($request) ||
-            ! isset($this->meta['fields']) ||
-            ! is_array($this->meta['fields'])
+            ! $this->areDependenciesSatisfied($request)
+            || ! isset($this->meta['fields'])
+            || ! is_array($this->meta['fields'])
         ) {
             return $fieldsRules;
         }

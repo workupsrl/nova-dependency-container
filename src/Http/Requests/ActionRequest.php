@@ -9,6 +9,7 @@ use Laravel\Nova\Http\Requests\ActionRequest as NovaActionRequest;
 
 class ActionRequest extends NovaActionRequest
 {
+
     use HasDependencies;
 
     /**
@@ -43,6 +44,6 @@ class ActionRequest extends NovaActionRequest
 
     public function novaRequest()
     {
-        return new NovaRequest();
+        return new NovaRequest;
     }
 }

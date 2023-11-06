@@ -1,6 +1,12 @@
 # Nova Dependency Container
 
-### Description
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/outl1ne/nova-dependency-container.svg)](https://packagist.org/packages/outl1ne/nova-dependency-container)
+[![Total Downloads](https://img.shields.io/packagist/dt/outl1ne/nova-dependency-container.svg)](https://packagist.org/packages/outl1ne/nova-dependency-container)
+[![License](https://img.shields.io/packagist/l/outl1ne/nova-dependency-container.svg)](https://github.com/outl1ne/nova-dependency-container/blob/master/LICENSE.md)
+
+This [Laravel Nova](https://nova.laravel.com) package adds a container for grouping fields that depend on other fields' values.
+
+## Requirements
 
 - `php: >=8.0`
 - `laravel/nova: ^4.0`
