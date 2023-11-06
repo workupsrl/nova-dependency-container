@@ -11,7 +11,7 @@ trait HasChildFields
      *
      * @return void
      */
-    protected function extractChildFields($childFields)
+    protected function extractChildFields($childFields): void
     {
         foreach ($childFields as $childField) {
             if ($childField instanceof DependencyContainer) {
@@ -29,19 +29,22 @@ trait HasChildFields
     /**
      * @param  [array] $childField
      *
-     * @return [array] $childField
+     * @return mixed [array] $childField
      */
-    protected function applyRulesForChildFields($childField)
+    protected function applyRulesForChildFields($childField): mixed
     {
         if (isset($childField->rules)) {
             $childField->rules[] = "sometimes:required:" . $childField->attribute;
         }
+
         if (isset($childField->creationRules)) {
             $childField->creationRules[] = "sometimes:required:" . $childField->attribute;
         }
+
         if (isset($childField->updateRules)) {
             $childField->updateRules[] = "sometimes:required:" . $childField->attribute;
         }
+
         return $childField;
     }
 }

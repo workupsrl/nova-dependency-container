@@ -7,6 +7,7 @@ use Laravel\Nova\Events\ServingNova;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\NovaServiceProviderRegistered;
+use Workup\Nova\DependencyContainer\Http\Controllers\ActionController;
 
 class FieldServiceProvider extends ServiceProvider
 {
@@ -17,11 +18,17 @@ class FieldServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Assets
+        Nova::serving(function (ServingNova $event) {
+            Nova::script('dependency-container', __DIR__ . '/../dist/js/entry.js');
+            Nova::style('dependency-container', __DIR__ . '/../dist/css/entry.css');
+        });
+
         // Override ActionController after NovaServiceProvider loaded
         Event::listen(NovaServiceProviderRegistered::class, function () {
             app()->bind(
                 \Laravel\Nova\Http\Controllers\ActionController::class,
-                \Workup\Nova\DependencyContainer\Http\Controllers\ActionController::class
+                ActionController::class
             );
         });
     }
